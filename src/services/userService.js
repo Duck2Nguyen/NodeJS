@@ -21,6 +21,7 @@ let handleUserLogin = (email, password) => {
             let isExist = await checkUserEmail(email);
             if (isExist) {
                 let data = await db.User.findOne({
+                    attributes: ['email', 'roleId', 'password', 'firstName', 'lastName'],
                     where: { email: email },
                     raw: true
                 })
@@ -120,8 +121,9 @@ let createNewUser = (data) => {
                     lastName: data.lastName,
                     address: data.address,
                     phonenumber: data.phonenumber,
-                    gender: data.gender === '1' ? true : false,
+                    gender: data.gender,
                     roleId: data.roleId,
+                    positionId: data.positionId
                 })
                 resolve({
                     errCode: 0,
@@ -164,7 +166,6 @@ let deleteUser = (id) => {
 let updateUserData = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-
             if (!data.id) {
                 resolve({
                     errCode: 2,
@@ -198,10 +199,36 @@ let updateUserData = (data) => {
     })
 
 }
+
+let getAllCodeService = (typeInput) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!typeInput) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing parameter"
+                })
+            }
+            else {
+                let res = {};
+                let allcode = await db.Allcode.findAll({
+                    where: { type: typeInput }
+                });
+                res.errCode = 0;
+                res.data = allcode
+                resolve(res);
+            }
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
 module.exports = {
     handleUserLogin: handleUserLogin,
     getAllUsers: getAllUsers,
     createNewUser: createNewUser,
     deleteUser: deleteUser,
     updateUserData: updateUserData,
+    getAllCodeService: getAllCodeService
 }
