@@ -33,7 +33,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       roleId: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.STRING
       },
       positionId: {
         type: Sequelize.STRING
