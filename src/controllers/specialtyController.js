@@ -13,7 +13,20 @@ let createSpecialty = async (req, res) => {
     }
 }
 
+let getAllspecialty = async (req, res) => {
+    try {
+        let infor = await specialtyService.getAllspecialty();
+        return res.status(200).json(infor)
+    } catch (e) {
+        console.log(e)``
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from sever'
+        })
+    }
+}
 
 module.exports = {
     createSpecialty: createSpecialty,
+    getAllspecialty: getAllspecialty
 }
