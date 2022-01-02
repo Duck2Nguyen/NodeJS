@@ -66,7 +66,7 @@ let getDetailSpecialtyById = (inputId, location) => {
                     attributes: ['descriptionHTML', 'descriptionMarkdown']
                 });
                 if (data) {
-                    let doctorSpecialty;
+                    let doctorSpecialty = [];
                     if (location == "ALL") {
                         doctorSpecialty = await db.Doctor_Infor.findAll({
                             where: {
