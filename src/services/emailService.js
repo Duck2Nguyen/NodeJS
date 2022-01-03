@@ -53,8 +53,51 @@ let sendSimpleEmail = async (dataSend) => {
     });
 }
 
+let getBodyHTMLEmailRemedy = (dataSend) => {
+    let result = "";
+    if (dataSend.language === 'vi') {
+        result = `
+        <h3>Xin chào ${dataSend.patientName}!</h3>
+        <p>Bạn nhận được email này vì đã đặt lịch khám bệnh online trên Duck2Nguyen thành công</p>
+        <p>Thông tin đơn thuốc được gửi trong file đính kèm:</p>
+        <div>Xin chân thành cảm ơn</div>
+        `
+    } else if (dataSend.language === 'en') {
+        result = `
+        <h3>Dear ${dataSend.patientName}!</h3>
+        <p>You received this email because you booked an online medical appointment on Duck2Nguyen successfully</p>
+        <div>Sincerely!</div>
+        `
+    }
+    return result
+}
 
+let sendAttachEmail = async (dataSend) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: process.env.EMAIL_APP, // generated ethereal user
+            pass: process.env.EMAIL_APP_PASSWORD, // generated ethereal password
+        },
+    });
+
+    // send mail with defined transport object
+    let info = await transporter.sendMail({
+        from: '"Duck2Nguyen" <taikhoanemail109@gmail.com>', // sender address
+        to: dataSend.email, // list of receivers
+        subject: "Phản hồi đặt lịch khám bệnh", // Subject line
+        html: getBodyHTMLEmailRemedy(dataSend), // html body
+        attachments: [{
+            filename: `remedy-${dataSend.patientId}-${new Date().getTime()}.png`,
+            content: dataSend.imgBase64.split('base64,')[1],
+            encoding: 'base64'
+        }]
+    });
+}
 
 module.exports = {
-    sendSimpleEmail: sendSimpleEmail
+    sendSimpleEmail: sendSimpleEmail,
+    sendAttachEmail: sendAttachEmail
 }
